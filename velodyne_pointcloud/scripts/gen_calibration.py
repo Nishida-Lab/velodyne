@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # Software License Agreement (BSD License)
 #
 # Copyright (C) 2012, Austin Robot Technology
@@ -131,9 +132,9 @@ if minIntensities != None:
         if el.tag == 'item':
             if enabled_lasers[index]:
                 value = int(el.text)
-                if value != 0:
+                if value != 256:
                     addLaserCalibration(index, 'min_intensity', value)
-            index += 1
+                    index += 1
 
 # add maximum laser intensities
 maxIntensities = db.find('DB/maxIntensity_')
@@ -143,9 +144,9 @@ if maxIntensities != None:
         if el.tag == 'item':
             if enabled_lasers[index]:
                 value = int(el.text)
-                if value != 255:
+                if value != 256:
                     addLaserCalibration(index, 'max_intensity', value)
-                index += 1
+                    index += 1
 
 # add calibration information for each laser
 for el in db.find('DB/points_'):
@@ -165,7 +166,7 @@ for el in db.find('DB/points_'):
                     addLaserCalibration(index, 'vert_correction',
                                         math.radians(float(field.text)))
                 elif field.tag == 'distCorrection_':
-                    addLaserCalibration(index, 'dist_correction', 
+                    addLaserCalibration(index, 'dist_correction',
                                         float(field.text) * cm2meters)
                 elif field.tag == 'distCorrectionX_':
                     addLaserCalibration(index, 'dist_correction_x',
@@ -180,10 +181,35 @@ for el in db.find('DB/points_'):
                     addLaserCalibration(index, 'horiz_offset_correction',
                                         float(field.text) * cm2meters)
                 elif field.tag == 'focalDistance_':
-                    addLaserCalibration(index, 'focal_distance', 
+                    addLaserCalibration(index, 'focal_distance',
                                         float(field.text) * cm2meters)
                 elif field.tag == 'focalSlope_':
                     addLaserCalibration(index, 'focal_slope', float(field.text))
+
+            # タグが足らなかったら0で埋める
+            field_tag = ['rotCorrection_',
+                         'vertCorrection_',
+                         'distCorrection_',
+                         'distCorrectionX_',
+                         'distCorrectionY_',
+                         'vertOffsetCorrection_',
+                         'horizOffsetCorrection_',
+                         'focalDistance_',
+                         'focalSlope_']
+            yaml_tag =  ['rot_correction',
+                         'vert_correction',
+                         'dist_correction',
+                         'dist_correction_x',
+                         'dist_correction_y',
+                         'vert_offset_correction',
+                         'horiz_offset_correction',
+                         'focal_distance',
+                         'focal_slope']
+            for x in xrange(0,9):
+                if px.find(field_tag[x]) == None: # xmlに特定のタグがなかったら
+                    # print("<" + field_tag[x] + ">のタグが見つかりません．0で補間します．")
+                    addLaserCalibration(index, yaml_tag[x], 0)
+
 
 # validate input data
 if calibration['num_lasers'] <= 0:
