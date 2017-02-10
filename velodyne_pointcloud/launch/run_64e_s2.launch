@@ -1,7 +1,7 @@
 
 <launch>
   <!-- pointcloud cloud_nodelet -->
-  <arg name="velodyne_calibration" default="$(find velodyne_pointcloud)/cfg/nishida_lab_mod.yaml" />
+  <arg name="velodyne_calibration" default="$(find velodyne_pointcloud)/cfg/hdl64e_s2_calib.yaml" />
   <!-- <arg name="velodyne_calibration" default="" /> -->
   <arg name="min_range" default="2.0" />
   <arg name="max_range" default="65.0" />
