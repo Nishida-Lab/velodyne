@@ -1,0 +1,50 @@
+
+<launch>
+  <!-- pointcloud cloud_nodelet -->
+  <arg name="velodyne_calibration" default="$(find velodyne_pointcloud)/cfg/hdl64e_s3_calib.yaml" />
+  <!-- <arg name="velodyne_calibration" default="" /> -->
+  <arg name="min_range" default="2.0" />
+  <arg name="max_range" default="65.0" />
+  <node pkg="nodelet" type="nodelet" name="cloud_nodelet"
+        args="load velodyne_pointcloud/CloudNodelet velodyne_nodelet_manager">
+    <param name="calibration" value="$(arg velodyne_calibration)"/>
+    <param name="min_range" value="$(arg min_range)"/>
+    <param name="max_range" value="$(arg max_range)"/>
+  </node>
+
+  <!-- start nodelet manager and load driver nodelet -->
+  <node pkg="nodelet" type="nodelet" name="velodyne_nodelet_manager"
+        args="manager" />
+  <arg name="model" default="64E_S3" />
+  <arg name="pcap" default="" />
+  <arg name="read_once" default="true" />
+  <arg name="read_fast" default="true" />
+  <arg name="repeat_delay" default="0.0" />
+
+  <!-- rotating parameter -->
+  <!-- 1) if your setting rpm is 1200(20Hz) -->
+  <!-- <arg name="rpm" default="850.0" /> -->
+
+  <!-- 2) if your setting rpm is 900(15Hz) -->
+  <!-- <arg name="rpm" default="850.0" /> -->
+
+  <!-- 3) if your setting rpm is 600(10Hz) -->
+  <arg name="rpm" default="570.0" />
+
+  <!-- 4) if your setting rpm is 300(5Hz) -->
+  <!-- <arg name="rpm" default="290.0" /> -->
+
+  <arg name="frame_id" default="velodyne" />
+
+  <node pkg="nodelet" type="nodelet" name="driver_nodelet"
+        args="load velodyne_driver/DriverNodelet velodyne_nodelet_manager" >
+    <param name="model" value="$(arg model)"/>
+    <param name="pcap" value="$(arg pcap)"/>
+    <param name="read_once" value="$(arg read_once)"/>
+    <param name="read_fast" value="$(arg read_fast)"/>
+    <param name="repeat_delay" value="$(arg repeat_delay)"/>
+    <param name="rpm" value="$(arg rpm)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+  </node>
+
+</launch>
