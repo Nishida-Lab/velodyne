@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 Austin Robot Technology, Patrick Beeson
  *  Copyright (C) 2009-2012 Austin Robot Technology, Jack O'Quin
- * 
+ *
  *  License: Modified BSD Software License Agreement
  *
  *  $Id$
@@ -37,7 +37,7 @@ VelodyneDriver::VelodyneDriver(ros::NodeHandle node,
   private_nh.param("model", config_.model, std::string("64E"));
   double packet_rate;                   // packet frequency (Hz)
   std::string model_full_name;
-  if ((config_.model == "64E_S2") || 
+  if ((config_.model == "64E_S2") ||
       (config_.model == "64E_S2.1"))    // generates 1333312 points per second (see Velodyne datasheet)
     {                                   // 1 packet holds 384 points
       packet_rate = 3472.17;            // 1333312 / 384
@@ -45,7 +45,7 @@ VelodyneDriver::VelodyneDriver(ros::NodeHandle node,
     }
     else if (config_.model == "64E_S3") // generates 1333120 points per second @600rpm
     {                                   // 1 packet --> 384 points (12 fire/packet and 32 laser/fire)
-      packet_rate = 3471.66;
+      packet_rate = 3471.66; // 1秒間に出されるパケット数 2,200,000/384
       model_full_name = std::string("HDL-") + config_.model;
     }
   else if (config_.model == "64E")
@@ -81,11 +81,11 @@ VelodyneDriver::VelodyneDriver(ros::NodeHandle node,
         packet_rate = 3472.5;
         }
       else if (config_.rpm == 1200)
-        {
-        packet_rate = 3473.33;
+        { // HDL-64e S3用の設定，要修正
+        packet_rate = 5729.17; // 2,200,000/384
         }
     }
-  
+
   ROS_INFO_STREAM(deviceName << " rotating at " << config_.rpm << " RPM");
   double frequency = (config_.rpm / 60.0);     // expected Hz rate
 
