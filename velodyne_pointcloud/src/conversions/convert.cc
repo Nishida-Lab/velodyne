@@ -29,7 +29,7 @@ namespace velodyne_pointcloud
     // advertise output point cloud (before subscribing to input data)
     output_ =
       node.advertise<sensor_msgs::PointCloud2>("velodyne_points", 10);
-      
+
     srv_ = boost::make_shared <dynamic_reconfigure::Server<velodyne_pointcloud::
       CloudNodeConfig> > (private_nh);
     dynamic_reconfigure::Server<velodyne_pointcloud::CloudNodeConfig>::
@@ -43,7 +43,7 @@ namespace velodyne_pointcloud
                      &Convert::processScan, (Convert *) this,
                      ros::TransportHints().tcpNoDelay(true));
   }
-  
+
   void Convert::callback(velodyne_pointcloud::CloudNodeConfig &config,
                 uint32_t level)
   {
@@ -67,6 +67,7 @@ namespace velodyne_pointcloud
     outMsg->height = 1;
 
     // process each packet provided by the driver
+    // ROS_DEBUG_STREAM("scanMsg->packets.size() = " << scanMsg->packets.size());
     for (size_t i = 0; i < scanMsg->packets.size(); ++i)
       {
         data_->unpack(scanMsg->packets[i], *outMsg);
